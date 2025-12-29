@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha</title>
+
+<style>
+body{
+  font-family:Arial,sans-serif;
+  background:#111;
+  color:#fff;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:20px;
+  min-height:100vh;
+  overflow:hidden;
+}
+
+h1{margin-bottom:20px}
+
+.people-grid{
+  width:100%;
+  max-width:1000px;
+  position:relative;
+}
+
+.person{
+  position:absolute;
+  text-align:center;
+  cursor:pointer;
+}
+
+.person p{
+  margin-top:6px;
+  font-size:14px;
+}
+
+.person img{
+  width:100px;
+  height:100px;
+  border-radius:50%;
+  object-fit:cover;
+  border:3px solid #fff;
+  transition:transform .3s;
+}
+
+.person img:hover{
+  transform:scale(1.15);
+}
+
+#lightbox{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.95);
+  display:none;
+  flex-direction:column;
+  align-items:center;
+  padding:20px;
+  z-index:100;
+  overflow-y:auto;
+}
+
+#lightbox img{
+  max-width:90%;
+  max-height:70vh;
+  margin:10px 0;
+  border-radius:10px;
+  object-fit:contain;
+}
+
+#closeBtn{
+  position:absolute;
+  top:20px;
+  right:30px;
+  font-size:2rem;
+  cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Ficha</h1>
+<div class="people-grid" id="peopleGrid"></div>
+
+<div id="lightbox">
+  <span id="closeBtn">&times;</span>
+  <h2 id="personName"></h2>
+  <div id="photoGallery"></div>
+</div>
+
+<script>
+const people = [
+  { name:"Nethen", avatar:"nethen/nethen1.jpg",
+    photos:["nethen/nethen1.jpg","nethen/nethen2.jpg","nethen/nethen3.jpg","nethen/nethen4.jpg"]
+  },
+  { name:"Ethan F", avatar:"Ethan%20F/EthanF2.jpg",
+    photos:["Ethan%20F/EthanF1.jpg","Ethan%20F/EthanF2.jpg","Ethan%20F/EthanF3.jpg","Ethan%20F/EthanF4.jpg"]
+  },
+  { name:"Ethan R", avatar:"Ethan%20R/EthanR2.jpg",
+    photos:["Ethan%20R/EthanR1.jpg","Ethan%20R/EthanR2.jpg","Ethan%20R/EthanR3.jpg","Ethan%20R/EthanR5.jpg"]
+  },
+  { name:"Ilyan", avatar:"Ilyan/ilyan1.jpg",
+    photos:["Ilyan/ilyan1.jpg","Ilyan/ilyan2.jpg","Ilyan/ilyan3.jpg","Ilyan/ilyan4.jpg"]
+  },
+  { name:"Lorenzo", avatar:"Lorenzo/lorenzo5.jpg",
+    photos:["Lorenzo/lorenzo1.jpg","Lorenzo/lorenzo2.jpg","Lorenzo/lorenzo6.jpg","Lorenzo/lorenzo4.jpg"]
+  },
+  { name:"Baptiste", avatar:"Baptiste/baptiste1.jpg",
+    photos:["Baptiste/baptiste1.jpg","Baptiste/baptiste2.jpg","Baptiste/baptiste3.jpg","Baptiste/baptiste4.jpg"]
+  },
+  { name:"Sohane", avatar:"Sohane/sohane1.jpg",
+    photos:["Sohane/sohane1.jpg","Sohane/sohane2.jpg","Sohane/sohane3.jpg","Sohane/sohane4.jpg"]
+  },
+  { name:"Theo L", avatar:"Theo%20L/theoL1.jpg",
+    photos:["Theo%20L/theoL1.jpg","Theo%20L/theoL2.jpg","Theo%20L/theoL3.jpg","Theo%20L/theoL4.jpg"]
+  },
+  { name:"Theo J", avatar:"Theo%20J/theoJ1.jpg",
+    photos:["Theo%20J/theoJ1.jpg","Theo%20J/theoJ2.jpg","Theo%20J/theoJ3.jpg","Theo%20J/theoJ5.jpg"]
+  }
+];
+
+const grid=document.getElementById("peopleGrid");
+
+people.forEach((p,i)=>{
+  const d=document.createElement("div");
+  d.className="person";
+  d.innerHTML=`<img src="${p.avatar}"><p>${p.name}</p>`;
+  grid.appendChild(d);
+
+  d.style.left=Math.random()*(window.innerWidth*0.8-120)+"px";
+  d.style.top=Math.random()*(window.innerHeight*0.8-120)+"px";
+
+  let dx=(Math.random()*0.4+0.2)*(Math.random()<0.5?-1:1);
+  let dy=(Math.random()*0.4+0.2)*(Math.random()<0.5?-1:1);
+
+  function move(){
+    let x=parseFloat(d.style.left);
+    let y=parseFloat(d.style.top);
+
+    if(x+dx<0||x+dx>window.innerWidth*0.8-120) dx*=-1;
+    if(y+dy<0||y+dy>window.innerHeight*0.8-120) dy*=-1;
+
+    d.style.left=x+dx+"px";
+    d.style.top=y+dy+"px";
+    requestAnimationFrame(move);
+  }
+  move();
+
+  d.onclick=()=>openLightbox(i);
+});
+
+const lightbox=document.getElementById("lightbox");
+const personName=document.getElementById("personName");
+const photoGallery=document.getElementById("photoGallery");
+
+function openLightbox(i){
+  personName.textContent=people[i].name;
+  photoGallery.innerHTML="";
+  people[i].photos.forEach(p=>{
+    const img=document.createElement("img");
+    img.src=p;
+    photoGallery.appendChild(img);
+  });
+  lightbox.style.display="flex";
+}
+
+document.getElementById("closeBtn").onclick=()=>lightbox.style.display="none";
+lightbox.onclick=e=>{ if(e.target===lightbox) lightbox.style.display="none"; }
+</script>
+
+</body>
+</html>
